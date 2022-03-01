@@ -1,0 +1,10 @@
+Database:
+  DBType: mysql
+  Username: root
+  Password: 1234ever.A
+  Host: 127.0.0.1:3306
+  DBName: g_server
+  Charset: utf8
+  ParseTime: True
+  MaxIdleConns: 10
+  MaxOpenConns: 30

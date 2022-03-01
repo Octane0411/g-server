@@ -1,11 +1,30 @@
 package setting
 
 import (
+	logger2 "g-server/common/logger"
 	"github.com/spf13/viper"
-	"log"
 	"os"
 	"path/filepath"
 )
+
+func init() {
+	setupSetting()
+}
+
+var logger = logger2.NewLogger()
+
+var DatabaseSetting *DatabaseSettingS
+
+func setupSetting() {
+	setting, err := NewSetting()
+	if err != nil {
+		logger.Fatal(err)
+	}
+	err = setting.ReadSection("Database", &DatabaseSetting)
+	if err != nil {
+		logger.Fatal(err)
+	}
+}
 
 type Setting struct {
 	vp *viper.Viper
@@ -14,9 +33,8 @@ type Setting struct {
 func NewSetting() (*Setting, error) {
 	vp := viper.New()
 	vp.SetConfigName("config")
-	configDir := GetConfigDir()
+	configDir := GetConfigPath()
 	vp.AddConfigPath(configDir)
-	vp.AddConfigPath("configs/")
 	vp.SetConfigType("yaml")
 	err := vp.ReadInConfig()
 	if err != nil {
@@ -27,12 +45,16 @@ func NewSetting() (*Setting, error) {
 	}, nil
 }
 
-func GetConfigDir() string {
-	exe, err := os.Executable()
+func GetConfigPath() string {
+	ex, err := os.Executable()
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
-	dir := filepath.Dir(exe)
-	dir = filepath.Join(dir, "configs")
-	return dir
+	exPath := filepath.Dir(ex)
+	rootPath, err := filepath.EvalSymlinks(exPath)
+	configPath := filepath.Join(rootPath, "config")
+	if err != nil {
+		logger.Fatal(err)
+	}
+	return configPath
 }

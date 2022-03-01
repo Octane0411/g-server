@@ -17,7 +17,7 @@ fi
 #echo "============================="
 #echo "==== packaging"
 #echo "============================="
-#tar -czf g-server.tar.gz g-server configs
+#tar -czf g-server.tar.gz g-server config
 #
 #rm -rf dist
 #mkdir -p dist
