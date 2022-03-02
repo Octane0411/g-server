@@ -1,2 +1,2 @@
-go build -o ../g-server ../main.go
-../g-server
+go build -o /Users/octane/go/src/g-server/g-server /Users/octane/go/src/g-server/main.go
+/Users/octane/go/src/g-server/g-server
