@@ -58,3 +58,16 @@ func GetConfigPath() string {
 	}
 	return configPath
 }
+
+func GetRootPath() string {
+	ex, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	exPath := filepath.Dir(ex)
+	rootPath, err := filepath.EvalSymlinks(exPath)
+	if err != nil {
+		logger.Fatal(err)
+	}
+	return rootPath
+}

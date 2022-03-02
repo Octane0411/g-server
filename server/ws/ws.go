@@ -2,6 +2,7 @@ package ws
 
 import (
 	"flag"
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"html/template"
 	"log"
@@ -12,21 +13,23 @@ var addr = flag.String("addr", "0.0.0.0:8080", "http service address")
 
 var upgrader = websocket.Upgrader{} // use default options
 
-func echo(w http.ResponseWriter, r *http.Request) {
-	c, err := upgrader.Upgrade(w, r, nil)
+func Echo(c *gin.Context) {
+	remoteAddr := c.Request.RemoteAddr
+
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Print("upgrade:", err)
 		return
 	}
-	defer c.Close()
+	defer conn.Close()
 	for {
-		mt, message, err := c.ReadMessage()
+		mt, message, err := conn.ReadMessage()
 		if err != nil {
 			log.Println("read:", err)
 			break
 		}
-		log.Printf("recv: %s", message)
-		err = c.WriteMessage(mt, message)
+		log.Printf("recv: %s from :%s", message, remoteAddr)
+		err = conn.WriteMessage(mt, message)
 		if err != nil {
 			log.Println("write:", err)
 			break
@@ -34,16 +37,8 @@ func echo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func home(w http.ResponseWriter, r *http.Request) {
-	homeTemplate.Execute(w, "ws://"+r.Host+"/echo")
-}
-
-func Start() {
-	flag.Parse()
-	log.SetFlags(0)
-	http.HandleFunc("/echo", echo)
-	http.HandleFunc("/", home)
-	log.Fatal(http.ListenAndServe(*addr, nil))
+func Home(c *gin.Context) {
+	homeTemplate.Execute(c.Writer, "ws://"+c.Request.Host+"/echo")
 }
 
 var homeTemplate = template.Must(template.New("").Parse(`
@@ -119,3 +114,24 @@ You can change the message and send multiple times.
 </body>
 </html>
 `))
+
+func wshandler(hub *Hub, w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	client := &Client{
+		hub:  hub,
+		conn: conn,
+		send: make(chan []byte, 256),
+	}
+	client.hub.register <- client
+
+	go client.writePump()
+	go client.readPump()
+}
+
+func HttpController(c *gin.Context, hub *Hub) {
+	wshandler(hub, c.Writer, c.Request)
+}
