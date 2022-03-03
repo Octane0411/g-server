@@ -1,15 +1,12 @@
 package ws
 
 import (
-	"flag"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"html/template"
 	"log"
 	"net/http"
 )
-
-var addr = flag.String("addr", "0.0.0.0:8080", "http service address")
 
 var upgrader = websocket.Upgrader{} // use default options
 

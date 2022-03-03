@@ -14,6 +14,8 @@ func init() {
 var logger = logger2.NewLogger()
 
 var DatabaseSetting *DatabaseSettingS
+var EmailSetting *EmailSettingS
+var AppSetting *AppSettingS
 
 func setupSetting() {
 	setting, err := NewSetting()

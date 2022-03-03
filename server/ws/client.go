@@ -3,6 +3,7 @@ package ws
 import (
 	"bytes"
 	logger2 "g-server/common/logger"
+	"g-server/server/model"
 	"github.com/gorilla/websocket"
 	"log"
 	"time"
@@ -39,9 +40,7 @@ type Client struct {
 	// Buffered channel of outbound messages.
 	send chan []byte
 
-	Addr string
-
-	Name string
+	*model.User
 }
 
 func (c *Client) readPump() {
