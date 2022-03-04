@@ -26,6 +26,14 @@ func setupSetting() {
 	if err != nil {
 		logger.Fatal(err)
 	}
+	err = setting.ReadSection("Email", &EmailSetting)
+	if err != nil {
+		logger.Fatal(err)
+	}
+	err = setting.ReadSection("App", &AppSetting)
+	if err != nil {
+		logger.Fatal(err)
+	}
 }
 
 type Setting struct {

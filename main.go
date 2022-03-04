@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "g-server/common/setting"
+	"g-server/server"
 )
 
 func main() {
@@ -15,5 +16,5 @@ func main() {
 			Email:    "",
 			Avatar:   "",
 		})*/
-	//server.Run()
+	server.Run()
 }
