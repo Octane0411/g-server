@@ -18,6 +18,11 @@ func Login(c *gin.Context) {
 
 }
 
+// @Summary 获取验证码
+// @Produce json
+// @Param email body string true "邮箱地址"
+// @Success 200
+// @Router /api/v1/captcha [post]
 func NeedCaptcha(c *gin.Context) {
 	// TODO 验证邮箱是否存在
 	param := &service.NeedCaptchaRequest{}

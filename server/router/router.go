@@ -5,6 +5,8 @@ import (
 	v1 "g-server/server/router/api/v1"
 	"g-server/server/ws"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func NewRouter() *gin.Engine {
@@ -21,6 +23,7 @@ func NewRouter() *gin.Engine {
 	r.GET("/echo", func(c *gin.Context) {
 		ws.HttpController(c, h)
 	})
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	apiv1 := r.Group("/api/v1")
 	{
 		apiv1.POST("/captcha", v1.NeedCaptcha)
