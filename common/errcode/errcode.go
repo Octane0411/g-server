@@ -70,6 +70,8 @@ func (e *Error) StatusCode() int {
 		return http.StatusTooManyRequests
 	case NotFound.Code():
 		return http.StatusNotFound
+	case InvalidCaptcha.Code():
+		return http.StatusBadRequest
 	}
 
 	return http.StatusInternalServerError

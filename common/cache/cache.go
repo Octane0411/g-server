@@ -1,13 +1,18 @@
 package cache
 
 import (
-	"fmt"
 	"github.com/allegro/bigcache"
 	"log"
 	"time"
 )
 
-func initCache() {
+var Cache *bigcache.BigCache
+
+func init() {
+	Cache = initCache()
+}
+
+func initCache() *bigcache.BigCache {
 	config := bigcache.Config{
 		// number of shards (must be a power of 2)
 		Shards: 1024,
@@ -50,10 +55,6 @@ func initCache() {
 	if initErr != nil {
 		log.Fatal(initErr)
 	}
+	return cache
 
-	cache.Set("my-unique-key", []byte("value"))
-
-	if entry, err := cache.Get("my-unique-key"); err == nil {
-		fmt.Println(string(entry))
-	}
 }

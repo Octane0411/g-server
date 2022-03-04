@@ -19,7 +19,7 @@ var m *gomail.Message
 // Ccers: 抄送者邮件，如有多个，用逗号分割，可以为空
 // subject: 邮件的主题
 // body: 邮件的内容
-func SendEmail(Toers, Ccers, subject, body string) error {
+func SendEmail(Toers, Ccers, subject, body, name string) error {
 	toers := []string{}
 
 	serverHost = setting.EmailSetting.ServerHost
@@ -52,7 +52,7 @@ func SendEmail(Toers, Ccers, subject, body string) error {
 		m.SetHeader("Cc", toers...)
 	}
 	// 发件人
-	m.SetAddressHeader("From", fromEmail, "")
+	m.SetAddressHeader("From", fromEmail, name)
 	// 主题
 	m.SetHeader("Subject", subject)
 	// 正文
