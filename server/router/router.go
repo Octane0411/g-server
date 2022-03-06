@@ -15,14 +15,11 @@ func NewRouter() *gin.Engine {
 	r.Use(gin.Recovery())
 	r.Use(middleware.Translations())
 
-	h := ws.NewHub()
-	go h.Run()
-
 	r.GET("/", ws.Home)
-	//r.GET("/echo", ws.Echo)
-	/*	r.GET("/echo", func(c *gin.Context) {
-		ws.HttpController(c, h)
-	})*/
+	r.GET("/echo", ws.Echo)
+	/*		r.GET("/echo", func(c *gin.Context) {
+			ws.HttpController(c, h)
+		})*/
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	apiv1 := r.Group("/api/v1")
 	{

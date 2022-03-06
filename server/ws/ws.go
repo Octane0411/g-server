@@ -9,22 +9,22 @@ import (
 	"net/http"
 )
 
-func RoomHandler(hub *Hub, w http.ResponseWriter, r *http.Request, u *model.User) {
+func RoomHandler(hub *model.Hub, w http.ResponseWriter, r *http.Request, u *model.User) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	client := &Client{
+	client := &model.Client{
 		Hub:  hub,
 		Conn: conn,
 		Send: make(chan []byte, 256),
 		User: u,
 	}
-	client.Hub.register <- client
+	client.Hub.Register <- client
 
-	go client.writePump()
-	go client.readPump()
+	go client.WritePump()
+	go client.ReadPump()
 }
 
 var upgrader = websocket.Upgrader{} // use default options

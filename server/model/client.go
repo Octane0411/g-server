@@ -1,9 +1,7 @@
-package ws
+package model
 
 import (
 	"bytes"
-	logger2 "g-server/common/logger"
-	"g-server/server/model"
 	"github.com/gorilla/websocket"
 	"log"
 	"time"
@@ -28,24 +26,22 @@ var (
 	space   = []byte{' '}
 )
 
-var logger = logger2.NewLogger()
-
 // Client is a middleman between the websocket connection and the Hub.
 type Client struct {
-	Hub *Hub
+	Hub *Hub `json:"hub"`
 
 	// The websocket connection.
-	Conn *websocket.Conn
+	Conn *websocket.Conn `json:"conn"`
 
 	// Buffered channel of outbound messages.
-	Send chan []byte
+	Send chan []byte `json:"send"`
 
-	*model.User
+	*User `json:"user"`
 }
 
-func (c *Client) readPump() {
+func (c *Client) ReadPump() {
 	defer func() {
-		c.Hub.unregister <- c
+		c.Hub.Unregister <- c
 		c.Conn.Close()
 	}()
 	c.Conn.SetReadLimit(maxMessageSize)
@@ -60,10 +56,10 @@ func (c *Client) readPump() {
 			break
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-		c.Hub.broadcast <- message
+		c.Hub.Broadcast <- message
 	}
 }
-func (c *Client) writePump() {
+func (c *Client) WritePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()
