@@ -6,5 +6,17 @@ import (
 )
 
 func (d *Dao) CreateUser(user *model.User) error {
-	return user.Create(db.DB)
+	return db.DB.Create(user).Error
+}
+
+func (d *Dao) SelectUserByEmail(email string) (*model.User, error) {
+	user := &model.User{}
+	err := db.DB.Where("email = ?", email).Where("is_del", 0).Find(user).Error
+	return user, err
+}
+
+func (d *Dao) SelectUserByUsername(username string) (*model.User, error) {
+	user := &model.User{}
+	err := db.DB.Where("username = ?", username).Where("is_del", 0).Find(user).Error
+	return user, err
 }

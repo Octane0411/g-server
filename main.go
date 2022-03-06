@@ -1,8 +1,9 @@
 package main
 
 import (
+	"g-server/common"
+	"g-server/common/rdb"
 	_ "g-server/common/setting"
-	"g-server/server"
 )
 
 func main() {
@@ -16,5 +17,6 @@ func main() {
 			Email:    "",
 			Avatar:   "",
 		})*/
-	server.Run()
+	//server.Run()
+
 }

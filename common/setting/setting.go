@@ -16,6 +16,7 @@ var logger = logger2.NewLogger()
 var DatabaseSetting *DatabaseSettingS
 var EmailSetting *EmailSettingS
 var AppSetting *AppSettingS
+var RedisSetting *RedisSettingS
 
 func setupSetting() {
 	setting, err := NewSetting()
@@ -31,6 +32,10 @@ func setupSetting() {
 		logger.Fatal(err)
 	}
 	err = setting.ReadSection("App", &AppSetting)
+	if err != nil {
+		logger.Fatal(err)
+	}
+	err = setting.ReadSection("Redis", &RedisSetting)
 	if err != nil {
 		logger.Fatal(err)
 	}

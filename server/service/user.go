@@ -22,6 +22,11 @@ type NeedCaptchaRequest struct {
 	Email string `form:"email" binding:"required"`
 }
 
+type LoginRequest struct {
+	UsernameOrEmail string `form:"usernameOrEmail" binding:"required"`
+	Password        string `form:"password" binding:"required"`
+}
+
 func (s *Service) CreateUser(param *ConfirmEmailRequest) error {
 	guuid := uuid.New().String()
 	curUser := &model.User{

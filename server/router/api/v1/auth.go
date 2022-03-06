@@ -1,9 +1,11 @@
 package v1
 
 import (
+	"g-server/common"
 	"g-server/common/cache"
 	"g-server/common/errcode"
 	logger2 "g-server/common/logger"
+	"g-server/common/rdb"
 	"g-server/common/response"
 	"g-server/common/validate"
 	"g-server/server/service"
@@ -15,7 +17,21 @@ import (
 var logger = logger2.NewLogger()
 
 func Login(c *gin.Context) {
+	param := &service.LoginRequest{}
+	r := response.NewResponse(c)
+	valid, verr := validate.BindAndValid(c, param)
+	if !valid {
+		logger.Errorf("BindAndValid err: %v", verr)
+		r.ToErrorResponse(errcode.InvalidParams.WithDetails(verr.Errors()...))
+		return
+	}
+	if ok := email.ValidEmail(param.UsernameOrEmail); ok {
+		//邮箱登录
+	} else {
+		//用户名登录
+	}
 
+	rdb.RDB.HSet(common.Ctx, "user", "1", "online")
 }
 
 // @Summary 获取验证码

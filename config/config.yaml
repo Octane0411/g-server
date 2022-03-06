@@ -16,3 +16,7 @@ Email:
 App:
   DefaultPageSize: 10
   MaxPageSize: 100
+Redis:
+  Addr: localhost:6379
+  Password:
+  DB: 0

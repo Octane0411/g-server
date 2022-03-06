@@ -1,7 +1,5 @@
 package model
 
-import "github.com/jinzhu/gorm"
-
 type User struct {
 	*Model
 	Uuid     string `json:"uuid"`
@@ -10,8 +8,4 @@ type User struct {
 	Status   string `json:"status"`
 	Email    string `json:"email"`
 	Avatar   string `json:"avatar"`
-}
-
-func (u User) Create(db *gorm.DB) error {
-	return db.Create(&u).Error
 }
