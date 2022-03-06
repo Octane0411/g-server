@@ -27,6 +27,10 @@ type LoginRequest struct {
 	Password        string `form:"password" binding:"required"`
 }
 
+type GetUserByUsernameRequest struct {
+	Username string
+}
+
 func (s *Service) CreateUser(param *ConfirmEmailRequest) error {
 	guuid := uuid.New().String()
 	curUser := &model.User{
@@ -37,4 +41,8 @@ func (s *Service) CreateUser(param *ConfirmEmailRequest) error {
 		Uuid:     guuid,
 	}
 	return s.dao.CreateUser(curUser)
+}
+
+func (s *Service) GetUserByUsername(param *GetUserByUsernameRequest) (*model.User, error) {
+	return s.dao.SelectUserByUsername(param.Username)
 }

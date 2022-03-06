@@ -17,6 +17,6 @@ func (d *Dao) SelectUserByEmail(email string) (*model.User, error) {
 
 func (d *Dao) SelectUserByUsername(username string) (*model.User, error) {
 	user := &model.User{}
-	err := db.DB.Where("username = ?", username).Where("is_del", 0).Find(user).Error
+	err := db.DB.Where("username = ?", username).Find(user).Error
 	return user, err
 }

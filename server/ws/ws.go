@@ -1,12 +1,31 @@
 package ws
 
 import (
+	"g-server/server/model"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"html/template"
 	"log"
 	"net/http"
 )
+
+func RoomHandler(hub *Hub, w http.ResponseWriter, r *http.Request, u *model.User) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	client := &Client{
+		Hub:  hub,
+		Conn: conn,
+		Send: make(chan []byte, 256),
+		User: u,
+	}
+	client.Hub.register <- client
+
+	go client.writePump()
+	go client.readPump()
+}
 
 var upgrader = websocket.Upgrader{} // use default options
 
@@ -74,12 +93,12 @@ window.addEventListener("load", function(evt) {
         }
         return false;
     };
-    document.getElementById("send").onclick = function(evt) {
+    document.getElementById("Send").onclick = function(evt) {
         if (!ws) {
             return false;
         }
         print("SEND: " + input.value);
-        ws.send(input.value);
+        ws.Send(input.value);
         return false;
     };
     document.getElementById("close").onclick = function(evt) {
@@ -96,14 +115,14 @@ window.addEventListener("load", function(evt) {
 <table>
 <tr><td valign="top" width="50%">
 <p>Click "Open" to create a connection to the server, 
-"Send" to send a message to the server and "Close" to close the connection. 
-You can change the message and send multiple times.
+"Send" to Send a message to the server and "Close" to close the connection. 
+You can change the message and Send multiple times.
 <p>
 <form>
 <button id="open">Open</button>
 <button id="close">Close</button>
 <p><input id="input" type="text" value="Hello world!">
-<button id="send">Send</button>
+<button id="Send">Send</button>
 </form>
 </td><td valign="top" width="50%">
 <div id="output" style="max-height: 70vh;overflow-y: scroll;"></div>
@@ -111,24 +130,3 @@ You can change the message and send multiple times.
 </body>
 </html>
 `))
-
-func wshandler(hub *Hub, w http.ResponseWriter, r *http.Request) {
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	client := &Client{
-		hub:  hub,
-		conn: conn,
-		send: make(chan []byte, 256),
-	}
-	client.hub.register <- client
-
-	go client.writePump()
-	go client.readPump()
-}
-
-func HttpController(c *gin.Context, hub *Hub) {
-	wshandler(hub, c.Writer, c.Request)
-}

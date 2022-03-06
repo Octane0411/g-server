@@ -21,22 +21,23 @@ func (h *Hub) Run() {
 		select {
 		case client := <-h.register:
 			h.clients[client] = true
-			logger.Infoln("client registered")
+			logger.Infoln("client registered: %v", client.Username)
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
+				logger.Infoln("client unregistered: %v", client.Username)
 				delete(h.clients, client)
-				close(client.send)
+				close(client.Send)
 			}
 		case message := <-h.broadcast:
 			for client := range h.clients {
 				select {
-				case client.send <- message:
+				case client.Send <- message:
 				default:
-					close(client.send)
+					close(client.Send)
 					delete(h.clients, client)
 				}
 			}
-			logger.Infof("message broadcast: %v\n", message)
+			logger.Infof("message broadcast from: %v\n", message)
 		}
 	}
 }
